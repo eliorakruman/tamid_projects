@@ -6,7 +6,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-import numpy as np
 
 df = pd.read_csv("IMDB Dataset.csv")
 # print(df.head())  # shows the structure of the csv
