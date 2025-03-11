@@ -9,9 +9,6 @@ from sklearn.preprocessing import MinMaxScaler
 import random
 
 df = pd.read_csv("boston_weather_data.csv")
-# print(df.head())  # shows the structure of the csv: time, tavg, tmin, tmax, prcp, wdir, wspd, pres. 3653 entries (3654 rows bc header)
-
-''' p redicted precipitation amount in millimetres for next day '''
 
 SEED = 42
 np.random.seed(SEED)
@@ -50,17 +47,19 @@ predicted_rain = model.predict(last_days)
 predicted_rain = scaler.inverse_transform(predicted_rain.reshape(-1, 1))
 print(f"Predicted Precipitation: {predicted_rain[0][0]:.2f}")
 
-print(f"Predicted Precipitation: {predicted_rain[0][0]:.2f}")
-
-''' root mean squared error and R^2 metrics instead of accuracy '''
+# root mean squared error and R^2 metrics instead of accuracy
 
 X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
 
 y_pred = model.predict(X_test)
 
-mse = mean_squared_error(y_test, y_pred)
+# Rescale predicted values correctly with zeros for the other features
+y_pred_rescaled = scaler.inverse_transform(np.concatenate([np.zeros((y_pred.shape[0], X_train.shape[2] - 1)), y_pred], axis=1))[:, -1]
+
+# Calculate RMSE and R^2 metrics
+mse = mean_squared_error(y_test, y_pred_rescaled)
 rmse = np.sqrt(mse)
-r2 = r2_score(y_test, y_pred)
+r2 = r2_score(y_test, y_pred_rescaled)
 
 print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
 print(f"R² Score: {r2:.4f}")
